@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Создаю сайты для ваших задач</title>
-  <meta name="description" content="Лендинги, сайты-визитки и интернет-магазины. Быстро, красиво и по доступной цене.">
+  <title>Сайты и Telegram-боты под ключ</title>
+  <meta name="description" content="Создаю лендинги, сайты-визитки, интернет-магазины, Telegram-ботов и Mini App. Быстро, красиво и по доступной цене.">
 
-  <!-- Выбираем тему ДО отрисовки страницы, чтобы не было мигания.
-       Сначала смотрим, что человек выбрал раньше, иначе берём тему его телефона. -->
+  <!-- Выбираем тему до отрисовки страницы, чтобы не было мигания -->
   <script>
     (function () {
       var theme = null;
@@ -20,7 +19,6 @@
   </script>
 
   <style>
-    /* ===== Цвета. Тёмная тема по умолчанию, светлая переопределяет значения ===== */
     :root {
       --bg: #0b0b0d;
       --card: #16161a;
@@ -29,7 +27,6 @@
       --muted: #b0b0b8;
       --accent: #ff3b30;
       --accent-2: #ff9f43;
-      --accent-hover: #ff6a5f;
       --nav-bg: rgba(11, 11, 13, 0.85);
       --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
     }
@@ -41,7 +38,6 @@
       --muted: #5a5a66;
       --accent: #e02a1f;
       --accent-2: #f08a24;
-      --accent-hover: #c2231a;
       --nav-bg: rgba(247, 247, 249, 0.88);
       --shadow: 0 10px 30px rgba(20, 20, 40, 0.08);
     }
@@ -62,7 +58,6 @@
     section h2 { font-size: 34px; line-height: 1.2; margin-bottom: 12px; }
     .lead { color: var(--muted); margin-bottom: 40px; max-width: 560px; }
 
-    /* Подчёркивание-акцент под заголовками секций */
     section h2::after {
       content: "";
       display: block;
@@ -79,7 +74,6 @@
       outline-offset: 3px;
     }
 
-    /* ===== Полоса прокрутки сверху ===== */
     .progress {
       position: fixed;
       top: 0; left: 0;
@@ -162,7 +156,6 @@
       padding: 100px 0 90px;
       text-align: center;
     }
-    /* Светящиеся пятна на фоне */
     .hero::before, .hero::after {
       content: "";
       position: absolute;
@@ -189,14 +182,14 @@
       border-radius: 20px;
       margin-bottom: 22px;
     }
-    .hero h1 { font-size: 40px; line-height: 1.15; margin-bottom: 18px; }
+    .hero h1 { font-size: 38px; line-height: 1.15; margin-bottom: 18px; }
     .grad {
       background: linear-gradient(90deg, var(--accent), var(--accent-2));
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
     }
-    .hero p { color: var(--muted); font-size: 19px; max-width: 520px; margin: 0 auto 32px; }
+    .hero p { color: var(--muted); font-size: 19px; max-width: 540px; margin: 0 auto 32px; }
     .hero .actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
     /* ===== Цифры ===== */
@@ -212,6 +205,7 @@
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
     }
+    .grid.four { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
     .card {
       background: var(--card);
       border: 1px solid var(--line);
@@ -253,15 +247,25 @@
     .work .thumb {
       height: 150px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 44px; font-weight: bold; color: rgba(255,255,255,0.9);
+      font-size: 54px;
     }
     .work .body { padding: 20px 24px 24px; }
     .work a { color: var(--accent); font-weight: bold; text-decoration: none; }
     .work a:hover { text-decoration: underline; }
     .tag { display: inline-block; font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 12px; padding: 2px 10px; margin-bottom: 10px; }
-    .t1 { background: linear-gradient(135deg, #14213d, #3a5a9b); }
-    .t2 { background: linear-gradient(135deg, #3a1c1c, #ff3b30); }
-    .t3 { background: linear-gradient(135deg, #1c3a2b, #3fae7a); }
+    .t-coffee { background: linear-gradient(135deg, #4a2f21, #c8863a); }
+    .t-bike   { background: linear-gradient(135deg, #14213d, #3a5a9b); }
+    .t-bot1   { background: linear-gradient(135deg, #1d3a52, #2b7bb9); }
+    .t-bot2   { background: linear-gradient(135deg, #2a2a31, #6b4a8f); }
+
+    .works-note {
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      padding: 12px 16px;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
 
     /* ===== Цены ===== */
     .price-card .price { font-size: 30px; font-weight: bold; margin: 12px 0 16px; color: var(--text); }
@@ -286,6 +290,7 @@
       cursor: pointer;
       color: var(--text);
     }
+    .check[hidden], .stepper[hidden] { display: none; }
     .check input { width: 20px; height: 20px; accent-color: var(--accent); flex-shrink: 0; }
     .check small { margin-left: auto; color: var(--muted); white-space: nowrap; }
 
@@ -386,7 +391,6 @@
       border-top: 1px solid var(--line);
     }
 
-    /* ===== Кнопка «Наверх» ===== */
     .to-top {
       position: fixed;
       right: 18px;
@@ -423,7 +427,7 @@
 
     /* ===== Адаптивность ===== */
     @media (min-width: 768px) {
-      .hero h1 { font-size: 58px; }
+      .hero h1 { font-size: 54px; }
       .calc { grid-template-columns: 1.3fr 1fr; }
     }
     @media (max-width: 760px) {
@@ -452,7 +456,7 @@
   <!-- Меню -->
   <nav class="nav">
     <div class="wrap">
-      <a class="logo" href="#top">Akira.maincode</a>
+      <a class="logo" href="#top">Веб-студия</a>
       <ul id="menu">
         <li><a href="#services">Услуги</a></li>
         <li><a href="#works">Работы</a></li>
@@ -468,9 +472,9 @@
   <!-- Первый экран -->
   <header class="hero" id="top">
     <div class="wrap">
-      <span class="badge">Сайты под ключ</span>
-      <h1>Создаю сайты <span class="grad">для ваших задач</span></h1>
-      <p>Быстро, красиво и по доступной цене. От идеи до готовой ссылки в интернете.</p>
+      <span class="badge">Сайты · Telegram-боты · Mini App</span>
+      <h1>Создаю сайты <span class="grad">и Telegram-ботов</span></h1>
+      <p>Быстро, красиво и по доступной цене. От идеи до готового решения, которое приносит заявки.</p>
       <div class="actions">
         <a class="btn" href="#calculator">Рассчитать стоимость</a>
         <a class="btn ghost" href="#works">Посмотреть работы</a>
@@ -502,22 +506,27 @@
   <section id="services">
     <div class="wrap">
       <h2 class="reveal">Услуги</h2>
-      <p class="lead reveal">Делаю сайты, которые понятны посетителям и хорошо выглядят на телефоне.</p>
-      <div class="grid">
+      <p class="lead reveal">Сайты и боты, которые понятны клиентам и приносят заявки.</p>
+      <div class="grid four">
         <div class="card reveal">
           <div class="icon">▤</div>
-          <h3>Лендинг</h3>
-          <p>Одностраничный сайт, который рассказывает о вашем бизнесе и собирает заявки.</p>
-        </div>
-        <div class="card reveal">
-          <div class="icon">☺</div>
-          <h3>Сайт-визитка</h3>
-          <p>Коротко о вас, ваших услугах и контактах. Подходит мастерам и специалистам.</p>
+          <h3>Лендинги и визитки</h3>
+          <p>Одностраничные сайты и сайты-визитки для бизнеса, мастеров и специалистов.</p>
         </div>
         <div class="card reveal">
           <div class="icon">✦</div>
-          <h3>Интернет-магазин</h3>
+          <h3>Интернет-магазины</h3>
           <p>Каталог товаров и приём заказов онлайн.</p>
+        </div>
+        <div class="card reveal">
+          <div class="icon">➤</div>
+          <h3>Telegram-боты</h3>
+          <p>Приём заказов и записей, ответы на вопросы, уведомления вам в Telegram.</p>
+        </div>
+        <div class="card reveal">
+          <div class="icon">◧</div>
+          <h3>Telegram Mini App</h3>
+          <p>Приложение внутри Telegram: каталог, калькулятор, запись и заявки.</p>
         </div>
       </div>
     </div>
@@ -527,39 +536,51 @@
   <section id="works">
     <div class="wrap">
       <h2 class="reveal">Примеры работ</h2>
-      <p class="lead reveal">Сайты, которые я сделал. Выберите категорию.</p>
+      <p class="lead reveal">Откройте любой пример и попробуйте его в деле.</p>
+
+      <p class="works-note reveal">Это демо-проекты: я сделал их, чтобы показать, как может выглядеть ваш сайт или бот.</p>
 
       <div class="filters reveal" role="group" aria-label="Фильтр работ">
         <button class="chip active" data-filter="all" aria-pressed="true">Все</button>
-        <button class="chip" data-filter="landing" aria-pressed="false">Лендинги</button>
-        <button class="chip" data-filter="card" aria-pressed="false">Визитки</button>
+        <button class="chip" data-filter="site" aria-pressed="false">Сайты</button>
+        <button class="chip" data-filter="bot" aria-pressed="false">Telegram-боты</button>
       </div>
 
       <div class="grid">
-        <!-- data-type: к какой категории относится работа -->
-        <div class="card work reveal" data-type="landing">
-          <div class="thumb t1">С</div>
+        <div class="card work reveal" data-type="site">
+          <div class="thumb t-coffee">☕</div>
           <div class="body">
-            <span class="tag">Лендинг</span>
-            <h3>Спица</h3>
-            <p>Лендинг мастерской по ремонту велосипедов.</p>
+            <span class="tag">Лендинг · демо</span>
+            <h3>Кофейня «Зерно»</h3>
+            <p>Меню с категориями, часы работы с отметкой «сейчас открыто» и переход к заказу в Telegram.</p>
+            <p><a href="coffee.html">Открыть сайт →</a></p>
+          </div>
+        </div>
+        <div class="card work reveal" data-type="site">
+          <div class="thumb t-bike">🚲</div>
+          <div class="body">
+            <span class="tag">Лендинг · демо</span>
+            <h3>Мастерская «Спица»</h3>
+            <p>Услуги и цены мастерской по ремонту велосипедов, понятная запись.</p>
             <p><a href="example.html">Открыть сайт →</a></p>
           </div>
         </div>
-        <div class="card work reveal" data-type="landing">
-          <div class="thumb t2">?</div>
+        <div class="card work reveal" data-type="bot">
+          <div class="thumb t-bot1">☕</div>
           <div class="body">
-            <span class="tag">Лендинг</span>
-            <h3>Следующая работа</h3>
-            <p>Здесь будет ваш проект. Замените название, описание и ссылку.</p>
+            <span class="tag">Telegram-бот · демо</span>
+            <h3>Бот кофейни</h3>
+            <p>Клиент выбирает напиток, размер и время и забирает заказ без очереди.</p>
+            <p><a href="bots.html#coffee">Попробовать бота →</a></p>
           </div>
         </div>
-        <div class="card work reveal" data-type="card">
-          <div class="thumb t3">?</div>
+        <div class="card work reveal" data-type="bot">
+          <div class="thumb t-bot2">✂️</div>
           <div class="body">
-            <span class="tag">Визитка</span>
-            <h3>Ещё одна работа</h3>
-            <p>Добавляйте новые карточки по мере появления проектов.</p>
+            <span class="tag">Telegram-бот · демо</span>
+            <h3>Бот записи</h3>
+            <p>Запись в барбершоп на удобный день и время без звонков.</p>
+            <p><a href="bots.html#barber">Попробовать бота →</a></p>
           </div>
         </div>
       </div>
@@ -571,23 +592,32 @@
     <div class="wrap">
       <h2 class="reveal">Цены</h2>
       <p class="lead reveal">Стартовые цены. Точную стоимость можно прикинуть в калькуляторе ниже.</p>
-      <div class="grid">
-        <div class="card price-card featured reveal">
-          <h3>Лендинг</h3>
-          <p class="price">от 5 000 ₽</p>
-          <ul>
-            <li>Дизайн под ваш бизнес</li>
-            <li>Адаптация под телефон</li>
-            <li>Публикация в интернете</li>
-          </ul>
-        </div>
+      <div class="grid four">
         <div class="card price-card reveal">
           <h3>Сайт-визитка</h3>
           <p class="price">от 3 000 ₽</p>
           <ul>
-            <li>Информация о вас и услугах</li>
+            <li>О вас и услугах</li>
             <li>Кнопки связи</li>
-            <li>Публикация в интернете</li>
+            <li>Публикация</li>
+          </ul>
+        </div>
+        <div class="card price-card featured reveal">
+          <h3>Лендинг</h3>
+          <p class="price">от 5 000 ₽</p>
+          <ul>
+            <li>Дизайн под бизнес</li>
+            <li>Адаптация под телефон</li>
+            <li>Публикация</li>
+          </ul>
+        </div>
+        <div class="card price-card reveal">
+          <h3>Telegram-бот</h3>
+          <p class="price">от 7 000 ₽</p>
+          <ul>
+            <li>Сценарий диалога</li>
+            <li>Заявки вам в Telegram</li>
+            <li>Помощь с запуском</li>
           </ul>
         </div>
         <div class="card price-card reveal">
@@ -596,7 +626,7 @@
           <ul>
             <li>Каталог товаров</li>
             <li>Оформление заказа</li>
-            <li>Обсуждается под задачу</li>
+            <li>Под вашу задачу</li>
           </ul>
         </div>
       </div>
@@ -607,44 +637,60 @@
   <section id="calculator">
     <div class="wrap">
       <h2 class="reveal">Калькулятор стоимости</h2>
-      <p class="lead reveal">Выберите тип сайта и опции, и цена посчитается сразу.</p>
+      <p class="lead reveal">Выберите, что нужно, и цена посчитается сразу.</p>
 
       <div class="calc reveal">
         <div class="calc-fields">
           <label>
-            Тип сайта
+            Что нужно сделать
             <select id="calc-type">
-              <option value="5000">Лендинг</option>
-              <option value="3000">Сайт-визитка</option>
-              <option value="15000">Интернет-магазин</option>
+              <!-- value — базовая цена, data-kind — тип: site (сайт) или bot (бот и Mini App) -->
+              <option value="5000"  data-kind="site">Лендинг</option>
+              <option value="3000"  data-kind="site">Сайт-визитка</option>
+              <option value="15000" data-kind="site">Интернет-магазин</option>
+              <option value="7000"  data-kind="bot">Telegram-бот</option>
+              <option value="12000" data-kind="bot">Telegram Mini App</option>
             </select>
           </label>
 
           <fieldset>
             <legend>Дополнительно</legend>
 
-            <div class="stepper">
+            <div class="stepper" id="pages-box">
               <span class="name">Дополнительные страницы <small>+1 500 ₽ за каждую</small></span>
               <button type="button" id="pages-minus" aria-label="Меньше страниц">−</button>
               <output id="pages-count">0</output>
               <button type="button" id="pages-plus" aria-label="Больше страниц">+</button>
             </div>
 
+            <!-- data-for: для кого опция. Без data-for она доступна всем -->
             <label class="check">
-              <input type="checkbox" class="calc-extra" value="1000" data-name="форма заявки">
+              <input type="checkbox" class="calc-extra" value="1000" data-name="форма заявки" data-for="site">
               Форма заявки <small>+1 000 ₽</small>
             </label>
             <label class="check">
-              <input type="checkbox" class="calc-extra" value="1500" data-name="анимации">
+              <input type="checkbox" class="calc-extra" value="1500" data-name="анимации" data-for="site">
               Анимации <small>+1 500 ₽</small>
             </label>
             <label class="check">
-              <input type="checkbox" class="calc-extra" value="1500" data-name="светлая и тёмная тема">
+              <input type="checkbox" class="calc-extra" value="1500" data-name="светлая и тёмная тема" data-for="site">
               Светлая и тёмная тема <small>+1 500 ₽</small>
             </label>
             <label class="check">
-              <input type="checkbox" class="calc-extra" value="2000" data-name="домен и настройка">
+              <input type="checkbox" class="calc-extra" value="2000" data-name="домен и настройка" data-for="site">
               Домен и настройка <small>+2 000 ₽</small>
+            </label>
+            <label class="check">
+              <input type="checkbox" class="calc-extra" value="3000" data-name="приём онлайн-оплаты" data-for="bot">
+              Приём онлайн-оплаты <small>+3 000 ₽</small>
+            </label>
+            <label class="check">
+              <input type="checkbox" class="calc-extra" value="2000" data-name="рассылки клиентам" data-for="bot">
+              Рассылки клиентам <small>+2 000 ₽</small>
+            </label>
+            <label class="check">
+              <input type="checkbox" class="calc-extra" value="1500" data-name="заявки вам в Telegram">
+              Заявки приходят вам в Telegram <small>+1 500 ₽</small>
             </label>
           </fieldset>
 
@@ -672,8 +718,8 @@
       <div class="grid steps">
         <div class="card step reveal"><h3>Заявка</h3><p>Вы оставляете заявку или пишете мне в мессенджер.</p></div>
         <div class="card step reveal"><h3>Обсуждение</h3><p>Уточняем задачу, сроки и стоимость.</p></div>
-        <div class="card step reveal"><h3>Разработка</h3><p>Делаю сайт и показываю результат.</p></div>
-        <div class="card step reveal"><h3>Запуск</h3><p>Правки, публикация и ссылка на готовый сайт.</p></div>
+        <div class="card step reveal"><h3>Разработка</h3><p>Делаю сайт или бота и показываю результат.</p></div>
+        <div class="card step reveal"><h3>Запуск</h3><p>Правки, публикация и помощь с запуском.</p></div>
       </div>
     </div>
   </section>
@@ -686,11 +732,15 @@
       <div class="faq reveal">
         <div class="faq-item">
           <button class="faq-q" aria-expanded="false">Сколько времени занимает работа?</button>
-          <div class="faq-a">Лендинг обычно готов за 3–5 дней, визитка быстрее. Срочные заказы возможны за 1–2 дня.</div>
+          <div class="faq-a">Лендинг обычно готов за 3–5 дней, визитка быстрее. Срок бота зависит от сценария. Срочные заказы возможны за 1–2 дня.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">Что умеет Telegram-бот?</button>
+          <div class="faq-a">Принимает заказы и записи, отвечает на частые вопросы, присылает вам заявки и может отправлять рассылки клиентам. Попробовать можно в разделе «Примеры работ».</div>
         </div>
         <div class="faq-item">
           <button class="faq-q" aria-expanded="false">Нужно ли платить за хостинг?</button>
-          <div class="faq-a">Простой сайт можно разместить бесплатно. Платным будет только собственный домен, если он вам нужен.</div>
+          <div class="faq-a">Простой сайт можно разместить бесплатно. Боту нужен хостинг, который работает постоянно: помогу выбрать и запустить. Платным может быть собственный домен.</div>
         </div>
         <div class="faq-item">
           <button class="faq-q" aria-expanded="false">Будет ли сайт открываться на телефоне?</button>
@@ -744,7 +794,7 @@
     </div>
   </section>
 
-  <footer>© 2026 Akira.maincode. Все права защищены.</footer>
+  <footer>© 2026 Веб-студия. Все права защищены.</footer>
 
   <button class="to-top" id="to-top" aria-label="Наверх">↑</button>
 
@@ -772,14 +822,13 @@
     function applyTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
       themeBtn.textContent = theme === 'dark' ? '☾' : '☀';
-      try { localStorage.setItem('theme', theme); } catch (e) {}  // запоминаем выбор в браузере
+      try { localStorage.setItem('theme', theme); } catch (e) {}
     }
 
     themeBtn.addEventListener('click', () => {
       const current = document.documentElement.getAttribute('data-theme');
       applyTheme(current === 'dark' ? 'light' : 'dark');
     });
-    // Подставляем правильный значок при загрузке
     themeBtn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☾' : '☀';
 
 
@@ -790,14 +839,33 @@
     const totalEl = document.getElementById('calc-total');
     const summaryEl = document.getElementById('calc-summary');
     const orderBtn = document.getElementById('calc-order');
+    const pagesBox = document.getElementById('pages-box');
     const pagesCountEl = document.getElementById('pages-count');
 
-    const PAGE_PRICE = 1500;   // цена одной дополнительной страницы
+    const PAGE_PRICE = 1500;
     let pages = 0;
     let summaryText = '';
 
     function formatPrice(n) {
       return n.toLocaleString('ru-RU') + ' ₽';
+    }
+
+    // Показываем только те опции, которые подходят выбранному типу (сайт или бот)
+    function syncOptions() {
+      const kind = typeSelect.options[typeSelect.selectedIndex].dataset.kind;
+
+      pagesBox.hidden = kind !== 'site';
+      if (kind !== 'site') {
+        pages = 0;
+        pagesCountEl.textContent = 0;
+      }
+
+      extras.forEach((box) => {
+        const target = box.dataset.for;               // undefined — подходит всем
+        const show = !target || target === kind;
+        box.closest('label').hidden = !show;
+        if (!show) box.checked = false;
+      });
     }
 
     function calculate() {
@@ -828,19 +896,20 @@
     }
 
     document.getElementById('pages-plus').addEventListener('click', () => {
-      pages = Math.min(pages + 1, 10);          // не больше 10
+      pages = Math.min(pages + 1, 10);
       pagesCountEl.textContent = pages;
       calculate();
     });
     document.getElementById('pages-minus').addEventListener('click', () => {
-      pages = Math.max(pages - 1, 0);           // не меньше 0
+      pages = Math.max(pages - 1, 0);
       pagesCountEl.textContent = pages;
       calculate();
     });
 
-    typeSelect.addEventListener('change', calculate);
+    typeSelect.addEventListener('change', () => { syncOptions(); calculate(); });
     extras.forEach((box) => box.addEventListener('change', calculate));
     rush.addEventListener('change', calculate);
+    syncOptions();
     calculate();
 
     orderBtn.addEventListener('click', () => {
@@ -866,7 +935,6 @@
         });
 
         works.forEach((work) => {
-          // hidden — встроенный атрибут HTML, который прячет элемент
           work.hidden = !(filter === 'all' || work.dataset.type === filter);
         });
       });
@@ -893,7 +961,7 @@
       const start = performance.now();
 
       function step(now) {
-        const progress = Math.min((now - start) / duration, 1);   // от 0 до 1
+        const progress = Math.min((now - start) / duration, 1);
         el.textContent = Math.round(target * progress);
         if (progress < 1) requestAnimationFrame(step);
       }
@@ -931,7 +999,7 @@
             link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
           });
         });
-      }, { rootMargin: '-40% 0px -55% 0px' });   // «рабочая зона» в середине экрана
+      }, { rootMargin: '-40% 0px -55% 0px' });
 
       sections.forEach((section) => spy.observe(section));
     }

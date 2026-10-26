@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telegram-боты: демо</title>
+  <meta name="description" content="Интерактивные демо Telegram-ботов: приём заказов для кофейни и запись в барбершоп.">
+  <style>
+    :root {
+      --bg: #0b0b0d;
+      --card: #16161a;
+      --line: #2a2a31;
+      --text: #f2f2f2;
+      --muted: #b0b0b8;
+      --accent: #ff3b30;
+      --accent-2: #ff9f43;
+
+      /* Цвета «Telegram» внутри окна чата */
+      --tg-bg: #0e1621;
+      --tg-head: #17212b;
+      --tg-bot: #182533;
+      --tg-user: #2b5278;
+      --tg-key: rgba(106, 179, 243, 0.16);
+      --tg-key-hover: rgba(106, 179, 243, 0.28);
+      --tg-link: #6ab3f3;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+
+    a:focus-visible, button:focus-visible, input:focus-visible {
+      outline: 3px solid var(--accent-2);
+      outline-offset: 3px;
+    }
+
+    .top { border-bottom: 1px solid var(--line); }
+    .top .wrap { height: 60px; display: flex; align-items: center; }
+    .top a { color: var(--muted); text-decoration: none; font-size: 15px; }
+    .top a:hover { color: var(--text); }
+
+    .intro { padding: 48px 0 28px; }
+    .intro h1 { font-size: 34px; line-height: 1.2; margin-bottom: 12px; }
+    .grad {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .intro p { color: var(--muted); max-width: 560px; }
+
+    .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 28px; }
+    .tab {
+      font: inherit; font-size: 15px;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      padding: 9px 20px;
+      cursor: pointer;
+    }
+    .tab:hover { color: var(--text); border-color: var(--accent); }
+    .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .layout { display: grid; gap: 32px; grid-template-columns: 1fr; padding-bottom: 72px; }
+
+    /* ===== Окно «Telegram» ===== */
+    .phone {
+      width: 100%;
+      max-width: 400px;
+      height: 580px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      background: var(--tg-bg);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      overflow: hidden;
+    }
+    .chat-head {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--tg-head);
+      padding: 12px 16px;
+    }
+    .avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    .chat-head strong { display: block; font-size: 16px; }
+    .chat-head small { color: #7f91a4; font-size: 13px; }
+
+    .msgs {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .msg {
+      max-width: 84%;
+      padding: 9px 13px;
+      border-radius: 14px;
+      font-size: 15px;
+      line-height: 1.45;
+      white-space: pre-line;
+      word-wrap: break-word;
+    }
+    .msg.bot  { background: var(--tg-bot);  align-self: flex-start; border-bottom-left-radius: 4px; }
+    .msg.user { background: var(--tg-user); align-self: flex-end;   border-bottom-right-radius: 4px; }
+
+    .kb { display: grid; gap: 6px; align-self: stretch; margin: 0 2px; }
+    .kbtn {
+      font: inherit; font-size: 14px;
+      color: var(--tg-link);
+      background: var(--tg-key);
+      border: none;
+      border-radius: 10px;
+      padding: 10px 12px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .kbtn:hover { background: var(--tg-key-hover); }
+
+    .typing { display: flex; gap: 4px; padding: 13px 14px; }
+    .typing span {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #7f91a4;
+      animation: blink 1.2s infinite ease-in-out;
+    }
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
+
+    .chat-input { display: flex; gap: 8px; background: var(--tg-head); padding: 10px 12px; }
+    .chat-input input {
+      flex: 1;
+      font: inherit; font-size: 15px;
+      color: var(--text);
+      background: var(--tg-bg);
+      border: none;
+      border-radius: 20px;
+      padding: 10px 16px;
+    }
+    .chat-input button {
+      width: 42px; height: 42px;
+      border: none; border-radius: 50%;
+      background: var(--tg-link);
+      color: #0e1621;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    /* ===== Описание справа ===== */
+    .about h2 { font-size: 26px; margin-bottom: 12px; }
+    .about > p { color: var(--muted); margin-bottom: 20px; }
+    .about ul { list-style: none; margin-bottom: 24px; }
+    .about li { color: var(--muted); padding: 8px 0 8px 28px; position: relative; }
+    .about li::before { content: "✓"; position: absolute; left: 0; color: var(--accent); font-weight: bold; }
+    .note {
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: 14px;
+      padding: 14px 16px;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .btn {
+      display: inline-block;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color: #fff;
+      font-size: 17px;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 40px;
+      padding: 14px 30px;
+    }
+    .btn:hover { filter: brightness(1.1); }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .typing span { animation: none; opacity: 0.7; }
+    }
+
+    @media (min-width: 860px) {
+      .layout { grid-template-columns: 400px 1fr; align-items: start; }
+      .phone { margin: 0; }
+      .intro h1 { font-size: 42px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top">
+    <div class="wrap"><a href="index.html#works">← Вернуться к портфолио</a></div>
+  </div>
+
+  <div class="wrap">
+    <div class="intro">
+      <h1>Telegram-боты: <span class="grad">попробуйте сами</span></h1>
+      <p>Это демо-версии: в окне ниже бот отвечает так же, как в настоящем Telegram. Нажимайте кнопки и проходите весь сценарий.</p>
+    </div>
+
+    <div class="tabs" role="group" aria-label="Выбор бота">
+      <button class="tab active" data-bot="coffee" aria-pressed="true">☕ Бот кофейни</button>
+      <button class="tab" data-bot="barber" aria-pressed="false">✂️ Бот записи</button>
+    </div>
+
+    <div class="layout">
+      <div class="phone">
+        <div class="chat-head">
+          <div class="avatar" id="avatar">☕</div>
+          <div><strong id="bot-name">Зерно</strong><small>бот</small></div>
+        </div>
+        <div class="msgs" id="msgs" aria-live="polite"></div>
+        <form class="chat-input" id="chat-form" autocomplete="off">
+          <input type="text" id="chat-text" placeholder="Сообщение" aria-label="Сообщение боту">
+          <button type="submit" aria-label="Отправить">➤</button>
+        </form>
+      </div>
+
+      <div class="about">
+        <h2 id="about-title"></h2>
+        <p id="about-text"></p>
+        <ul id="about-list"></ul>
+        <div class="note">Демо-проект для портфолио. В настоящем боте заказы и записи приходили бы вам в Telegram, а данные хранились бы в базе.</div>
+        <a class="btn" href="index.html#order">Заказать такого бота</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Каждый бот описан как набор «состояний» (экранов диалога).
+    // Состояние возвращает текст и кнопки. Кнопка записывается так:
+    // ['Подпись', 'в какое состояние перейти', { что запомнить }]
+
+    function orderNumber() { return 100 + Math.floor(Math.random() * 900); }
+
+    const BOTS = {
+
+      // ---------- Бот кофейни ----------
+      coffee: {
+        name: 'Зерно',
+        avatar: '☕',
+        about: {
+          title: 'Бот кофейни',
+          text: 'Клиент заказывает напиток заранее и забирает без очереди. Бариста получает готовый заказ.',
+          points: [
+            'Показывает меню и часы работы',
+            'Принимает заказ: напиток, размер, время получения',
+            'Сообщает вам о новом заказе в Telegram',
+            'Может принимать оплату прямо в чате'
+          ]
+        },
+        states: {
+          start: () => ({
+            text: 'Привет! Я бот кофейни «Зерно» ☕\nЧто хотите сделать?',
+            buttons: [['📋 Меню', 'menu'], ['🛒 Сделать заказ', 'drink'], ['🕒 Часы работы', 'hours']]
+          }),
+          menu: () => ({
+            text: 'Наше меню:\n\n☕ Эспрессо — 150 ₽\n☕ Американо — 180 ₽\n☕ Капучино — 220 ₽\n☕ Латте — 240 ₽\n☕ Раф — 280 ₽\n🥐 Круассан — 190 ₽',
+            buttons: [['🛒 Заказать', 'drink'], ['← В начало', 'start']]
+          }),
+          hours: () => ({
+            text: '🕒 Пн–Пт: 8:00–22:00\n🕒 Сб–Вс: 9:00–23:00\n\n📍 Ваш город, ул. Примерная, 12',
+            buttons: [['🛒 Сделать заказ', 'drink'], ['← В начало', 'start']]
+          }),
+          drink: () => ({
+            text: 'Что будете пить?',
+            buttons: [
+              ['Капучино · 220 ₽', 'size', { drink: 'Капучино', price: 220 }],
+              ['Латте · 240 ₽',    'size', { drink: 'Латте',    price: 240 }],
+              ['Американо · 180 ₽', 'size', { drink: 'Американо', price: 180 }],
+              ['Раф · 280 ₽',      'size', { drink: 'Раф',      price: 280 }]
+            ]
+          }),
+          size: (d) => ({
+            text: d.drink + '. Какой размер?',
+            buttons: [
+              ['Маленький, 250 мл', 'time', { size: '250 мл', extra: 0 }],
+              ['Большой, 350 мл (+40 ₽)', 'time', { size: '350 мл', extra: 40 }]
+            ]
+          }),
+          time: () => ({
+            text: 'Когда заберёте?',
+            buttons: [
+              ['Через 15 минут', 'confirm', { when: 'через 15 минут' }],
+              ['Через 30 минут', 'confirm', { when: 'через 30 минут' }],
+              ['Через час',      'confirm', { when: 'через час' }]
+            ]
+          }),
+          confirm: (d) => ({
+            text: 'Проверьте заказ:\n\n☕ ' + d.drink + ', ' + d.size + '\n🕒 Заберёте ' + d.when + '\n💰 К оплате: ' + (d.price + d.extra) + ' ₽',
+            buttons: [['✅ Подтвердить', 'done'], ['✖ Отменить', 'cancel']]
+          }),
+          done: () => ({
+            text: '✅ Заказ №' + orderNumber() + ' принят!\nМы сообщим, когда он будет готов. Спасибо, что выбрали «Зерно» ☕',
+            buttons: [['🔁 Новый заказ', 'drink'], ['← В начало', 'start']]
+          }),
+          cancel: () => ({
+            text: 'Заказ отменён. Если передумаете, я всегда на связи.',
+            buttons: [['🛒 Заказать заново', 'drink'], ['← В начало', 'start']]
+          }),
+          fallback: () => ({
+            text: 'В демо-версии я отвечаю на кнопки 🙂 Нажмите «В начало», чтобы продолжить.',
+            buttons: [['← В начало', 'start']]
+          })
+        }
+      },
+
+      // ---------- Бот записи ----------
+      barber: {
+        name: 'Барбершоп «Бритва»',
+        avatar: '✂️',
+        about: {
+          title: 'Бот записи',
+          text: 'Клиент записывается на удобное время сам, без звонков и переписки. Вы видите все записи в одном месте.',
+          points: [
+            'Показывает услуги и цены',
+            'Предлагает свободные дни и время',
+            'Подтверждает запись и напоминает о визите',
+            'Присылает вам уведомление о новой записи'
+          ]
+        },
+        states: {
+          start: () => ({
+            text: 'Здравствуйте! Это бот барбершопа «Бритва» ✂️\nЧем могу помочь?',
+            buttons: [['📅 Записаться', 'service'], ['💈 Услуги и цены', 'prices'], ['🗂 Мои записи', 'my']]
+          }),
+          prices: () => ({
+            text: 'Услуги:\n\n✂️ Стрижка — 1 200 ₽\n🧔 Борода — 700 ₽\n💈 Стрижка + борода — 1 800 ₽',
+            buttons: [['📅 Записаться', 'service'], ['← В начало', 'start']]
+          }),
+          service: () => ({
+            text: 'Выберите услугу:',
+            buttons: [
+              ['Стрижка · 1 200 ₽', 'day', { service: 'Стрижка', price: 1200 }],
+              ['Борода · 700 ₽', 'day', { service: 'Борода', price: 700 }],
+              ['Стрижка + борода · 1 800 ₽', 'day', { service: 'Стрижка + борода', price: 1800 }]
+            ]
+          }),
+          day: () => ({
+            text: 'На какой день записать?',
+            buttons: [
+              ['Сегодня', 'slot', { day: 'сегодня' }],
+              ['Завтра', 'slot', { day: 'завтра' }],
+              ['Послезавтра', 'slot', { day: 'послезавтра' }]
+            ]
+          }),
+          slot: (d) => ({
+            text: 'Свободное время (' + d.day + '):',
+            buttons: [
+              ['12:00', 'confirm', { time: '12:00' }],
+              ['14:30', 'confirm', { time: '14:30' }],
+              ['17:00', 'confirm', { time: '17:00' }],
+              ['19:00', 'confirm', { time: '19:00' }]
+            ]
+          }),
+          confirm: (d) => ({
+            text: 'Проверьте запись:\n\n✂️ ' + d.service + '\n📅 ' + d.day + ', ' + d.time + '\n💰 ' + d.price + ' ₽',
+            buttons: [['✅ Подтвердить', 'done'], ['✖ Отменить', 'cancel']]
+          }),
+          done: (d) => {
+            d.last = d.service + ', ' + d.day + ' в ' + d.time;   // запоминаем для «Мои записи»
+            return {
+              text: '✅ Вы записаны!\n' + d.last + '.\nНапомню за час до визита.',
+              buttons: [['🗂 Мои записи', 'my'], ['← В начало', 'start']]
+            };
+          },
+          cancel: () => ({
+            text: 'Запись отменена. Выберите другое время, когда будет удобно.',
+            buttons: [['📅 Записаться заново', 'service'], ['← В начало', 'start']]
+          }),
+          my: (d) => ({
+            text: d.last ? '🗂 Ваша ближайшая запись:\n' + d.last : 'У вас пока нет записей.',
+            buttons: [['📅 Записаться', 'service'], ['← В начало', 'start']]
+          }),
+          fallback: () => ({
+            text: 'В демо-версии я отвечаю на кнопки 🙂 Нажмите «В начало», чтобы продолжить.',
+            buttons: [['← В начало', 'start']]
+          })
+        }
+      }
+    };
+
+
+    // ===== Движок чата =====
+    const msgsEl = document.getElementById('msgs');
+    const form = document.getElementById('chat-form');
+    const input = document.getElementById('chat-text');
+    const tabs = document.querySelectorAll('.tab');
+
+    let botId = 'coffee';
+    let data = {};            // здесь бот запоминает выбор клиента
+    let session = 0;          // меняется при смене бота, чтобы «забыть» старые ответы
+
+    function scrollDown() {
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+    }
+
+    function addMessage(text, who) {
+      const el = document.createElement('div');
+      el.className = 'msg ' + who;
+      el.textContent = text;        // textContent безопаснее, чем innerHTML
+      msgsEl.appendChild(el);
+      scrollDown();
+    }
+
+    function addKeyboard(buttons) {
+      const kb = document.createElement('div');
+      kb.className = 'kb';
+      buttons.forEach(([label, next, set]) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'kbtn';
+        btn.textContent = label;
+        btn.addEventListener('click', () => {
+          kb.remove();                       // после нажатия убираем кнопки
+          Object.assign(data, set || {});    // запоминаем выбор
+          addMessage(label, 'user');
+          botSay(next);
+        });
+        kb.appendChild(btn);
+      });
+      msgsEl.appendChild(kb);
+      scrollDown();
+    }
+
+    function botSay(stateId) {
+      const mySession = session;
+      const typing = document.createElement('div');
+      typing.className = 'msg bot typing';
+      typing.innerHTML = '<span></span><span></span><span></span>';
+      msgsEl.appendChild(typing);
+      scrollDown();
+
+      setTimeout(() => {
+        typing.remove();
+        if (mySession !== session) return;   // бота уже сменили
+        const state = BOTS[botId].states[stateId](data);
+        addMessage(state.text, 'bot');
+        if (state.buttons) addKeyboard(state.buttons);
+      }, 550);
+    }
+
+    function removeKeyboards() {
+      msgsEl.querySelectorAll('.kb').forEach((kb) => kb.remove());
+    }
+
+    function openBot(id) {
+      botId = id;
+      data = {};
+      session++;
+      msgsEl.innerHTML = '';
+
+      const bot = BOTS[id];
+      document.getElementById('bot-name').textContent = bot.name;
+      document.getElementById('avatar').textContent = bot.avatar;
+      document.getElementById('about-title').textContent = bot.about.title;
+      document.getElementById('about-text').textContent = bot.about.text;
+
+      const list = document.getElementById('about-list');
+      list.innerHTML = '';
+      bot.about.points.forEach((point) => {
+        const li = document.createElement('li');
+        li.textContent = point;
+        list.appendChild(li);
+      });
+
+      tabs.forEach((tab) => {
+        const active = tab.dataset.bot === id;
+        tab.classList.toggle('active', active);
+        tab.setAttribute('aria-pressed', String(active));
+      });
+
+      botSay('start');
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        history.replaceState(null, '', '#' + tab.dataset.bot);
+        openBot(tab.dataset.bot);
+      });
+    });
+
+    // Пользователь может и печатать: /start запускает бота заново
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      removeKeyboards();
+      addMessage(text, 'user');
+      botSay(text.toLowerCase() === '/start' ? 'start' : 'fallback');
+    });
+
+    // Открываем нужного бота по ссылке: bots.html#barber
+    const fromHash = location.hash.replace('#', '');
+    openBot(BOTS[fromHash] ? fromHash : 'coffee');
+  </script>
+
+</body>
+</html>
