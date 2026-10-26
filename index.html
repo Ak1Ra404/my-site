@@ -1,11 +1,26 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Создаю сайты для ваших задач</title>
   <meta name="description" content="Лендинги, сайты-визитки и интернет-магазины. Быстро, красиво и по доступной цене.">
+
+  <!-- Выбираем тему ДО отрисовки страницы, чтобы не было мигания.
+       Сначала смотрим, что человек выбрал раньше, иначе берём тему его телефона. -->
+  <script>
+    (function () {
+      var theme = null;
+      try { theme = localStorage.getItem('theme'); } catch (e) {}
+      if (!theme) {
+        theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      }
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
   <style>
+    /* ===== Цвета. Тёмная тема по умолчанию, светлая переопределяет значения ===== */
     :root {
       --bg: #0b0b0d;
       --card: #16161a;
@@ -13,36 +28,75 @@
       --text: #f2f2f2;
       --muted: #b0b0b8;
       --accent: #ff3b30;
+      --accent-2: #ff9f43;
       --accent-hover: #ff6a5f;
+      --nav-bg: rgba(11, 11, 13, 0.85);
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+    [data-theme="light"] {
+      --bg: #f7f7f9;
+      --card: #ffffff;
+      --line: #e3e3e9;
+      --text: #15151a;
+      --muted: #5a5a66;
+      --accent: #e02a1f;
+      --accent-2: #f08a24;
+      --accent-hover: #c2231a;
+      --nav-bg: rgba(247, 247, 249, 0.88);
+      --shadow: 0 10px 30px rgba(20, 20, 40, 0.08);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; scroll-padding-top: 70px; }
 
     body {
       font-family: Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.6;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
     .wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
-    section { padding: 72px 0; }
-    section h2 { font-size: 32px; margin-bottom: 12px; }
-    .lead { color: var(--muted); margin-bottom: 36px; max-width: 560px; }
+    section { padding: 80px 0; }
+    section h2 { font-size: 34px; line-height: 1.2; margin-bottom: 12px; }
+    .lead { color: var(--muted); margin-bottom: 40px; max-width: 560px; }
+
+    /* Подчёркивание-акцент под заголовками секций */
+    section h2::after {
+      content: "";
+      display: block;
+      width: 56px;
+      height: 4px;
+      border-radius: 4px;
+      margin-top: 12px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
 
     a:focus-visible, button:focus-visible, input:focus-visible,
     textarea:focus-visible, select:focus-visible {
-      outline: 3px solid #fff;
+      outline: 3px solid var(--accent-2);
       outline-offset: 3px;
+    }
+
+    /* ===== Полоса прокрутки сверху ===== */
+    .progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      width: 0;
+      z-index: 30;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
     }
 
     /* ===== Меню ===== */
     .nav {
       position: sticky;
       top: 0;
-      z-index: 10;
-      background: rgba(11, 11, 13, 0.95);
+      z-index: 20;
+      background: var(--nav-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--line);
     }
     .nav .wrap {
@@ -50,29 +104,38 @@
       justify-content: space-between;
       align-items: center;
       height: 60px;
+      gap: 12px;
     }
     .logo { font-weight: bold; font-size: 18px; color: var(--text); text-decoration: none; }
-    .nav ul { display: flex; gap: 20px; list-style: none; }
-    .nav ul a { color: var(--muted); text-decoration: none; font-size: 15px; }
+    .nav ul { display: flex; gap: 6px; list-style: none; margin-left: auto; }
+    .nav ul a {
+      display: block;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 15px;
+      padding: 8px 12px;
+      border-radius: 20px;
+    }
     .nav ul a:hover { color: var(--text); }
+    .nav ul a.active { color: var(--text); background: var(--card); }
 
-    /* Кнопка-«бургер» для телефона: на компьютере скрыта */
-    .burger {
-      display: none;
+    .icon-btn {
       background: none;
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 10px;
       color: var(--text);
-      font-size: 22px;
+      font-size: 20px;
       width: 44px;
       height: 40px;
       cursor: pointer;
     }
+    .icon-btn:hover { border-color: var(--accent); }
+    .burger { display: none; }
 
     /* ===== Кнопки ===== */
     .btn {
       display: inline-block;
-      background: var(--accent);
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
       color: #fff;
       font: inherit;
       font-size: 17px;
@@ -82,21 +145,66 @@
       border-radius: 40px;
       padding: 14px 30px;
       cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .btn:hover { background: var(--accent-hover); }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 59, 48, 0.35); }
     .btn.ghost {
       background: transparent;
       border: 2px solid var(--line);
       color: var(--text);
     }
-    .btn.ghost:hover { border-color: var(--accent); }
+    .btn.ghost:hover { border-color: var(--accent); box-shadow: none; }
 
     /* ===== Первый экран ===== */
-    .hero { padding: 96px 0 80px; text-align: center; }
-    .hero h1 { font-size: 40px; line-height: 1.2; margin-bottom: 18px; }
-    .hero h1 span { color: var(--accent); }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 100px 0 90px;
+      text-align: center;
+    }
+    /* Светящиеся пятна на фоне */
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.35;
+      z-index: -1;
+      animation: float 12s ease-in-out infinite alternate;
+    }
+    .hero::before { width: 320px; height: 320px; background: var(--accent); top: -80px; left: -60px; }
+    .hero::after  { width: 280px; height: 280px; background: var(--accent-2); bottom: -80px; right: -40px; animation-delay: -6s; }
+    @keyframes float {
+      from { transform: translate(0, 0); }
+      to   { transform: translate(40px, 30px); }
+    }
+
+    .badge {
+      display: inline-block;
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--muted);
+      font-size: 14px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 22px;
+    }
+    .hero h1 { font-size: 40px; line-height: 1.15; margin-bottom: 18px; }
+    .grad {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
     .hero p { color: var(--muted); font-size: 19px; max-width: 520px; margin: 0 auto 32px; }
     .hero .actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+    /* ===== Цифры ===== */
+    .stats { padding: 0 0 40px; }
+    .stats .grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+    .stat { text-align: center; padding: 22px 16px; }
+    .stat .num { font-size: 38px; font-weight: bold; }
+    .stat p { font-size: 14px; }
 
     /* ===== Карточки ===== */
     .grid {
@@ -107,49 +215,63 @@
     .card {
       background: var(--card);
       border: 1px solid var(--line);
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 24px;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
+    .card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: var(--shadow); }
     .card h3 { margin-bottom: 8px; font-size: 20px; }
     .card p { color: var(--muted); }
 
     .icon {
-      width: 44px; height: 44px;
-      border-radius: 12px;
-      background: rgba(255, 59, 48, 0.15);
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(255, 59, 48, 0.2), rgba(255, 159, 67, 0.2));
       color: var(--accent);
       display: flex; align-items: center; justify-content: center;
-      font-size: 22px;
+      font-size: 24px;
       margin-bottom: 16px;
     }
 
-    /* ===== Работы ===== */
+    /* ===== Работы + фильтр ===== */
+    .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+    .chip {
+      font: inherit;
+      font-size: 15px;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      padding: 8px 18px;
+      cursor: pointer;
+    }
+    .chip:hover { color: var(--text); border-color: var(--accent); }
+    .chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
     .work { padding: 0; overflow: hidden; }
+    .work[hidden] { display: none; }
     .work .thumb {
       height: 150px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 40px; font-weight: bold; color: rgba(255,255,255,0.85);
+      font-size: 44px; font-weight: bold; color: rgba(255,255,255,0.9);
     }
     .work .body { padding: 20px 24px 24px; }
     .work a { color: var(--accent); font-weight: bold; text-decoration: none; }
     .work a:hover { text-decoration: underline; }
+    .tag { display: inline-block; font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 12px; padding: 2px 10px; margin-bottom: 10px; }
     .t1 { background: linear-gradient(135deg, #14213d, #3a5a9b); }
     .t2 { background: linear-gradient(135deg, #3a1c1c, #ff3b30); }
     .t3 { background: linear-gradient(135deg, #1c3a2b, #3fae7a); }
 
     /* ===== Цены ===== */
-    .price-card .price { font-size: 30px; font-weight: bold; margin: 12px 0 16px; }
+    .price-card .price { font-size: 30px; font-weight: bold; margin: 12px 0 16px; color: var(--text); }
     .price-card ul { list-style: none; margin-bottom: 8px; }
     .price-card li { color: var(--muted); padding: 6px 0 6px 26px; position: relative; }
     .price-card li::before { content: "✓"; position: absolute; left: 0; color: var(--accent); }
     .price-card.featured { border-color: var(--accent); }
 
     /* ===== Калькулятор ===== */
-    .calc {
-      display: grid;
-      gap: 28px;
-      grid-template-columns: 1fr;
-    }
+    .calc { display: grid; gap: 28px; grid-template-columns: 1fr; }
     .calc-fields { display: grid; gap: 18px; }
     .calc-fields fieldset { border: none; display: grid; gap: 10px; }
     .calc-fields legend { color: var(--muted); font-size: 15px; margin-bottom: 8px; }
@@ -159,39 +281,65 @@
       gap: 12px;
       padding: 12px 14px;
       border: 1px solid var(--line);
-      border-radius: 10px;
+      border-radius: 12px;
+      background: var(--card);
       cursor: pointer;
       color: var(--text);
     }
     .check input { width: 20px; height: 20px; accent-color: var(--accent); flex-shrink: 0; }
     .check small { margin-left: auto; color: var(--muted); white-space: nowrap; }
+
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--card);
+    }
+    .stepper .name { flex: 1; }
+    .stepper small { color: var(--muted); white-space: nowrap; }
+    .stepper button {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--text);
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .stepper button:hover { border-color: var(--accent); }
+    .stepper output { min-width: 20px; text-align: center; font-weight: bold; }
+
     .calc-result {
       background: var(--card);
       border: 1px solid var(--accent);
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 28px;
       align-self: start;
+      box-shadow: var(--shadow);
     }
     .calc-result .label { color: var(--muted); font-size: 15px; }
-    .calc-result .total { font-size: 42px; font-weight: bold; margin: 6px 0 12px; }
+    .calc-result .total { font-size: 44px; font-weight: bold; margin: 6px 0 12px; }
     .calc-result .summary { color: var(--muted); font-size: 15px; margin-bottom: 20px; }
 
-    /* ===== Как я работаю ===== */
+    /* ===== Шаги ===== */
     .steps { counter-reset: step; }
     .step::before {
       counter-increment: step;
       content: counter(step);
       display: flex; align-items: center; justify-content: center;
-      width: 36px; height: 36px;
+      width: 38px; height: 38px;
       border-radius: 50%;
-      background: var(--accent);
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
       color: #fff; font-weight: bold;
       margin-bottom: 14px;
     }
 
     /* ===== FAQ ===== */
     .faq { max-width: 700px; display: grid; gap: 12px; }
-    .faq-item { border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .faq-item { border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
     .faq-q {
       width: 100%;
       display: flex;
@@ -220,49 +368,66 @@
       color: var(--text);
       background: var(--card);
       border: 1px solid var(--line);
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 12px 14px;
     }
     textarea { min-height: 110px; resize: vertical; }
     .form-status { min-height: 24px; font-size: 15px; }
-    .form-status.ok { color: #4cd964; }
-    .form-status.error { color: #ff6a5f; }
+    .form-status.ok { color: #2fb457; }
+    .form-status.error { color: var(--accent); }
 
-    /* ===== Контакты ===== */
+    /* ===== Контакты и подвал ===== */
     .contact-list { display: flex; flex-wrap: wrap; gap: 12px; }
-
     footer {
       text-align: center;
       padding: 28px 20px;
-      color: #77777f;
+      color: var(--muted);
       font-size: 14px;
       border-top: 1px solid var(--line);
     }
 
-    /* ===== Анимация появления =====
-       Класс "js" добавляет скрипт. Если JavaScript не сработает,
-       блоки просто будут видны сразу и сайт не сломается. */
+    /* ===== Кнопка «Наверх» ===== */
+    .to-top {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 25;
+    }
+    .to-top.show { opacity: 1; pointer-events: auto; }
+
+    /* ===== Анимация появления ===== */
     .js .reveal {
       opacity: 0;
       transform: translateY(24px);
       transition: opacity 0.6s ease, transform 0.6s ease;
     }
-    .js .reveal.visible {
-      opacity: 1;
-      transform: none;
-    }
+    .js .reveal.visible { opacity: 1; transform: none; }
+
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       .js .reveal { transition: none; }
+      .hero::before, .hero::after { animation: none; }
+      .card, .btn { transition: none; }
     }
 
     /* ===== Адаптивность ===== */
     @media (min-width: 768px) {
-      .hero h1 { font-size: 56px; }
+      .hero h1 { font-size: 58px; }
       .calc { grid-template-columns: 1.3fr 1fr; }
     }
-    @media (max-width: 600px) {
-      section { padding: 52px 0; }
+    @media (max-width: 760px) {
+      section { padding: 56px 0; }
       .burger { display: block; }
       .nav ul {
         display: none;
@@ -272,19 +437,22 @@
         gap: 0;
         background: var(--bg);
         border-bottom: 1px solid var(--line);
+        margin: 0;
       }
       .nav ul.open { display: flex; }
-      .nav ul a { display: block; padding: 16px 20px; font-size: 17px; }
+      .nav ul a { padding: 16px 20px; font-size: 17px; border-radius: 0; }
+      .logo { margin-right: auto; }
     }
   </style>
 </head>
 <body>
 
+  <div class="progress" id="progress"></div>
+
   <!-- Меню -->
   <nav class="nav">
     <div class="wrap">
       <a class="logo" href="#top">Веб-студия</a>
-      <button class="burger" id="burger" aria-label="Открыть меню" aria-expanded="false" aria-controls="menu">☰</button>
       <ul id="menu">
         <li><a href="#services">Услуги</a></li>
         <li><a href="#works">Работы</a></li>
@@ -292,13 +460,16 @@
         <li><a href="#faq">Вопросы</a></li>
         <li><a href="#order">Заявка</a></li>
       </ul>
+      <button class="icon-btn" id="theme-btn" aria-label="Переключить тему" title="Сменить тему">☾</button>
+      <button class="icon-btn burger" id="burger" aria-label="Открыть меню" aria-expanded="false" aria-controls="menu">☰</button>
     </div>
   </nav>
 
   <!-- Первый экран -->
   <header class="hero" id="top">
     <div class="wrap">
-      <h1>Создаю сайты <span>для ваших задач</span></h1>
+      <span class="badge">Сайты под ключ</span>
+      <h1>Создаю сайты <span class="grad">для ваших задач</span></h1>
       <p>Быстро, красиво и по доступной цене. От идеи до готовой ссылки в интернете.</p>
       <div class="actions">
         <a class="btn" href="#calculator">Рассчитать стоимость</a>
@@ -306,6 +477,26 @@
       </div>
     </div>
   </header>
+
+  <!-- Цифры. Замените на свои реальные значения -->
+  <section class="stats" id="stats">
+    <div class="wrap">
+      <div class="grid">
+        <div class="card stat reveal">
+          <div class="num grad"><span class="count" data-to="5">0</span> дн.</div>
+          <p>средний срок лендинга</p>
+        </div>
+        <div class="card stat reveal">
+          <div class="num grad"><span class="count" data-to="100">0</span>%</div>
+          <p>адаптация под телефон</p>
+        </div>
+        <div class="card stat reveal">
+          <div class="num grad"><span class="count" data-to="24">0</span> ч</div>
+          <p>отвечаю на заявки</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- Услуги -->
   <section id="services">
@@ -336,26 +527,37 @@
   <section id="works">
     <div class="wrap">
       <h2 class="reveal">Примеры работ</h2>
-      <p class="lead reveal">Сайты, которые я сделал. Нажмите, чтобы открыть.</p>
+      <p class="lead reveal">Сайты, которые я сделал. Выберите категорию.</p>
+
+      <div class="filters reveal" role="group" aria-label="Фильтр работ">
+        <button class="chip active" data-filter="all" aria-pressed="true">Все</button>
+        <button class="chip" data-filter="landing" aria-pressed="false">Лендинги</button>
+        <button class="chip" data-filter="card" aria-pressed="false">Визитки</button>
+      </div>
+
       <div class="grid">
-        <div class="card work reveal">
+        <!-- data-type: к какой категории относится работа -->
+        <div class="card work reveal" data-type="landing">
           <div class="thumb t1">С</div>
           <div class="body">
+            <span class="tag">Лендинг</span>
             <h3>Спица</h3>
             <p>Лендинг мастерской по ремонту велосипедов.</p>
             <p><a href="example.html">Открыть сайт →</a></p>
           </div>
         </div>
-        <div class="card work reveal">
+        <div class="card work reveal" data-type="landing">
           <div class="thumb t2">?</div>
           <div class="body">
+            <span class="tag">Лендинг</span>
             <h3>Следующая работа</h3>
             <p>Здесь будет ваш проект. Замените название, описание и ссылку.</p>
           </div>
         </div>
-        <div class="card work reveal">
+        <div class="card work reveal" data-type="card">
           <div class="thumb t3">?</div>
           <div class="body">
+            <span class="tag">Визитка</span>
             <h3>Ещё одна работа</h3>
             <p>Добавляйте новые карточки по мере появления проектов.</p>
           </div>
@@ -412,7 +614,6 @@
           <label>
             Тип сайта
             <select id="calc-type">
-              <!-- value — это базовая цена; её читает JavaScript -->
               <option value="5000">Лендинг</option>
               <option value="3000">Сайт-визитка</option>
               <option value="15000">Интернет-магазин</option>
@@ -421,6 +622,14 @@
 
           <fieldset>
             <legend>Дополнительно</legend>
+
+            <div class="stepper">
+              <span class="name">Дополнительные страницы <small>+1 500 ₽ за каждую</small></span>
+              <button type="button" id="pages-minus" aria-label="Меньше страниц">−</button>
+              <output id="pages-count">0</output>
+              <button type="button" id="pages-plus" aria-label="Больше страниц">+</button>
+            </div>
+
             <label class="check">
               <input type="checkbox" class="calc-extra" value="1000" data-name="форма заявки">
               Форма заявки <small>+1 000 ₽</small>
@@ -430,8 +639,8 @@
               Анимации <small>+1 500 ₽</small>
             </label>
             <label class="check">
-              <input type="checkbox" class="calc-extra" value="1500" data-name="дополнительная страница">
-              Дополнительная страница <small>+1 500 ₽</small>
+              <input type="checkbox" class="calc-extra" value="1500" data-name="светлая и тёмная тема">
+              Светлая и тёмная тема <small>+1 500 ₽</small>
             </label>
             <label class="check">
               <input type="checkbox" class="calc-extra" value="2000" data-name="домен и настройка">
@@ -537,56 +746,73 @@
 
   <footer>© 2026 Веб-студия. Все права защищены.</footer>
 
+  <button class="to-top" id="to-top" aria-label="Наверх">↑</button>
+
   <script>
-    // Сообщаем CSS, что JavaScript работает (нужно для анимации появления)
     document.documentElement.classList.add('js');
 
 
     // ===== 1. Меню-«бургер» на телефоне =====
-    // getElementById находит элемент по его id.
     const burger = document.getElementById('burger');
     const menu = document.getElementById('menu');
 
     function setMenu(open) {
-      menu.classList.toggle('open', open);               // добавляем или убираем класс open
-      burger.setAttribute('aria-expanded', String(open)); // сообщаем программам чтения экрана
+      menu.classList.toggle('open', open);
+      burger.setAttribute('aria-expanded', String(open));
     }
-
-    // addEventListener: «когда произойдёт клик — выполни функцию»
-    burger.addEventListener('click', () => {
-      setMenu(!menu.classList.contains('open'));
-    });
-
-    // После выбора пункта меню закрываем его
+    burger.addEventListener('click', () => setMenu(!menu.classList.contains('open')));
     menu.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => setMenu(false));
     });
 
 
-    // ===== 2. Калькулятор стоимости =====
+    // ===== 2. Переключатель светлой и тёмной темы =====
+    const themeBtn = document.getElementById('theme-btn');
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      themeBtn.textContent = theme === 'dark' ? '☾' : '☀';
+      try { localStorage.setItem('theme', theme); } catch (e) {}  // запоминаем выбор в браузере
+    }
+
+    themeBtn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    });
+    // Подставляем правильный значок при загрузке
+    themeBtn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☾' : '☀';
+
+
+    // ===== 3. Калькулятор стоимости =====
     const typeSelect = document.getElementById('calc-type');
     const extras = document.querySelectorAll('.calc-extra');
     const rush = document.getElementById('calc-rush');
     const totalEl = document.getElementById('calc-total');
     const summaryEl = document.getElementById('calc-summary');
     const orderBtn = document.getElementById('calc-order');
+    const pagesCountEl = document.getElementById('pages-count');
 
-    let summaryText = '';   // текст выбора; пригодится для формы
+    const PAGE_PRICE = 1500;   // цена одной дополнительной страницы
+    let pages = 0;
+    let summaryText = '';
 
     function formatPrice(n) {
       return n.toLocaleString('ru-RU') + ' ₽';
     }
 
     function calculate() {
-      // Number() превращает текст "5000" в число 5000
       let total = Number(typeSelect.value);
-      const typeName = typeSelect.options[typeSelect.selectedIndex].text;
-      const parts = [typeName];
+      const parts = [typeSelect.options[typeSelect.selectedIndex].text];
+
+      if (pages > 0) {
+        total += pages * PAGE_PRICE;
+        parts.push('доп. страниц: ' + pages);
+      }
 
       extras.forEach((box) => {
         if (box.checked) {
           total += Number(box.value);
-          parts.push(box.dataset.name);   // dataset.name читает атрибут data-name
+          parts.push(box.dataset.name);
         }
       });
 
@@ -601,13 +827,22 @@
       return total;
     }
 
-    // Пересчитываем при любом изменении
+    document.getElementById('pages-plus').addEventListener('click', () => {
+      pages = Math.min(pages + 1, 10);          // не больше 10
+      pagesCountEl.textContent = pages;
+      calculate();
+    });
+    document.getElementById('pages-minus').addEventListener('click', () => {
+      pages = Math.max(pages - 1, 0);           // не меньше 0
+      pagesCountEl.textContent = pages;
+      calculate();
+    });
+
     typeSelect.addEventListener('change', calculate);
     extras.forEach((box) => box.addEventListener('change', calculate));
     rush.addEventListener('change', calculate);
-    calculate();   // первый расчёт при загрузке страницы
+    calculate();
 
-    // Кнопка «Заказать за эту цену» подставляет выбор в форму
     orderBtn.addEventListener('click', () => {
       const total = calculate();
       document.getElementById('order-message').value =
@@ -616,45 +851,115 @@
     });
 
 
-    // ===== 3. Раскрывающийся FAQ =====
+    // ===== 4. Фильтр работ =====
+    const chips = document.querySelectorAll('.chip');
+    const works = document.querySelectorAll('.work');
+
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        const filter = chip.dataset.filter;
+
+        chips.forEach((c) => {
+          const active = c === chip;
+          c.classList.toggle('active', active);
+          c.setAttribute('aria-pressed', String(active));
+        });
+
+        works.forEach((work) => {
+          // hidden — встроенный атрибут HTML, который прячет элемент
+          work.hidden = !(filter === 'all' || work.dataset.type === filter);
+        });
+      });
+    });
+
+
+    // ===== 5. FAQ =====
     document.querySelectorAll('.faq-q').forEach((button) => {
       button.addEventListener('click', () => {
-        const item = button.parentElement;           // родитель кнопки — блок .faq-item
+        const item = button.parentElement;
         const isOpen = item.classList.toggle('open');
         button.setAttribute('aria-expanded', String(isOpen));
       });
     });
 
 
-    // ===== 4. Плавное появление блоков при прокрутке =====
-    const revealItems = document.querySelectorAll('.reveal');
+    // ===== 6. Появление блоков и анимация цифр =====
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    if ('IntersectionObserver' in window && !reduceMotion) {
-      // IntersectionObserver следит, когда элемент попадает в видимую область
+    function animateCount(el) {
+      const target = Number(el.dataset.to);
+      if (reduceMotion) { el.textContent = target; return; }
+      const duration = 1200;
+      const start = performance.now();
+
+      function step(now) {
+        const progress = Math.min((now - start) / duration, 1);   // от 0 до 1
+        el.textContent = Math.round(target * progress);
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    const revealItems = document.querySelectorAll('.reveal');
+
+    if ('IntersectionObserver' in window) {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);   // дальше следить не нужно
-          }
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('visible');
+          entry.target.querySelectorAll('.count').forEach(animateCount);
+          observer.unobserve(entry.target);
         });
       }, { threshold: 0.15 });
 
       revealItems.forEach((el) => observer.observe(el));
     } else {
       revealItems.forEach((el) => el.classList.add('visible'));
+      document.querySelectorAll('.count').forEach((el) => { el.textContent = el.dataset.to; });
     }
 
 
-    // ===== 5. Отправка формы без перезагрузки страницы =====
+    // ===== 7. Подсветка пункта меню по ходу прокрутки =====
+    const menuLinks = document.querySelectorAll('#menu a');
+    const sections = document.querySelectorAll('section[id]');
+
+    if ('IntersectionObserver' in window) {
+      const spy = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          menuLinks.forEach((link) => {
+            link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+          });
+        });
+      }, { rootMargin: '-40% 0px -55% 0px' });   // «рабочая зона» в середине экрана
+
+      sections.forEach((section) => spy.observe(section));
+    }
+
+
+    // ===== 8. Полоса прокрутки и кнопка «Наверх» =====
+    const progress = document.getElementById('progress');
+    const toTop = document.getElementById('to-top');
+
+    window.addEventListener('scroll', () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const percent = max > 0 ? (window.scrollY / max) * 100 : 0;
+      progress.style.width = percent + '%';
+      toTop.classList.toggle('show', window.scrollY > 600);
+    }, { passive: true });
+
+    toTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+
+    // ===== 9. Отправка формы без перезагрузки страницы =====
     const form = document.getElementById('order-form');
     const statusEl = document.getElementById('form-status');
 
     form.addEventListener('submit', async (event) => {
-      event.preventDefault();   // отменяем обычную отправку, делаем её сами
+      event.preventDefault();
 
-      // Пока вы не подставили свой код Formspree, честно об этом говорим
       if (form.action.includes('ВАШ_ID')) {
         statusEl.className = 'form-status error';
         statusEl.textContent = 'Форма пока не подключена к почте. Напишите мне в Telegram.';
